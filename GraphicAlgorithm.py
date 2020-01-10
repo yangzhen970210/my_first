@@ -105,3 +105,14 @@ def digui(arr):
     else:
         return arr     
 digui([1,3,-5,2,22,11,6,32,77,12])        
+
+--------------20200110   pandas collections numpy
+import pandas as pd 
+import numpy as np
+from collections import Counter
+df = pd.DataFrame(np.random.randn(20,6),columns=list('ABCDEF'))
+df.index = pd.date_range('20200110', periods=20)
+df['name'] = [np.random.choice(['python','golang','javascript','sql']) for x in range(20)]
+
+dict(zip(df['name'].values,df['A'].values))
+df[df['name'] == 'sql']['A']

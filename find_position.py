@@ -15,6 +15,7 @@ all_lines = {'one_line': ['罗湖', '国贸', '老街', '大剧院', '科学馆'
 '梅景', '下梅林', '梅村', '上梅林', '孖岭', '银湖', '泥岗', '红岭北', '园岭', '红岭', '红岭南', '鹿丹村', '人民南', '向西村', '文锦'], 
 'eleven_line': ['碧头', '松岗', '后亭', '沙井', '马安山', '塘尾', '桥头', '福永', '机场北','机场', '碧海湾', '宝安', '前海湾', '南山', '后海', '红树湾南', '车公庙', '福田']}
 
+# 1
 def find(arr, items):
     dict1 = defaultdict(list)
     for k, v in items.items():
@@ -24,3 +25,24 @@ def find(arr, items):
     return dict1
 
 find('one_line', items)
+
+# 融入其中
+class FindBestRoute:
+    """慢慢完善"""
+    def __init__(self,line):
+        self.line = line
+        self.all_lines = all_lines
+    
+    def intersect(self):
+        """与该线有交叉的线路和具体站"""
+        dict1 = defaultdict(list)
+        for k, v in self.all_lines.items():
+            for j in self.all_lines[self.line]:
+                if j in v and k != self.line:
+                    dict1[k].append(j)
+        return dict1
+
+test = FindBestRoute('one_line')
+
+test.intersect()
+

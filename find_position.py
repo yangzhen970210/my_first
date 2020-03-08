@@ -16,15 +16,17 @@ all_lines = {'one_line': ['罗湖', '国贸', '老街', '大剧院', '科学馆'
 'eleven_line': ['碧头', '松岗', '后亭', '沙井', '马安山', '塘尾', '桥头', '福永', '机场北','机场', '碧海湾', '宝安', '前海湾', '南山', '后海', '红树湾南', '车公庙', '福田']}
 
 # 1
-def find(arr, items):
-    dict1 = defaultdict(list)
-    for k, v in items.items():
-        for j in items[arr]:
-            if j in v and k != arr:
-                dict1[k].append(j)
-    return dict1
+#ef find(arr, items):
+#   dict1 = defaultdict(list)
+#   for k, v in items.items():
+#       for j in items[arr]:
+#           if j in v and k != arr:
+#               dict1[k].append(j)
+#   return dict1
 
-find('one_line', items)
+from collections import defaultdict,deque,Counter
+x = Counter([y for x in all_lines.values() for y in x])
+transfer_site = [k for k,v in x.items() if v>=2] #能够换乘的站
 
 # 融入其中
 class FindBestRoute:
@@ -32,6 +34,7 @@ class FindBestRoute:
     def __init__(self,line):
         self.line = line
         self.all_lines = all_lines
+        self.transfer_site = transfer_site
     
     def intersect(self):
         """与该线有交叉的线路和具体站"""
@@ -40,9 +43,50 @@ class FindBestRoute:
             for j in self.all_lines[self.line]:
                 if j in v and k != self.line:
                     dict1[k].append(j)
+        print(dict1)
         return dict1
 
 test = FindBestRoute('one_line')
 
 test.intersect()
+
+# 第二次增加
+def find(line_name, postions):
+    list1 = deque([[[line_name],postions]])  #循环体
+    li2 = [] #经过的线路
+    list3 = []  #保存结果
+    while list1:
+        ki, value = list1.popleft()
+        key = ki[-1]
+        if value >= 1:
+            list2 = [k for k, v in all_lines.items()  if key in v and k not in li2]   # 地铁线
+            for x in list2: #遍历地铁线
+                li2.extend(list2) 
+                index = all_lines[x].index(key)  #找出站点在地铁线的索引 
+                #list1.extend([ [ ki.append(v),value-k-1] for k,v in enumerate(all_lines[x][index+1:index+value+1]) if v in transfer_site or value-k-1 == 0])
+                for k,v in enumerate(all_lines[x][index+1:index+value+1]):  #站点右边
+                    if v in transfer_site or value-k-1 == 0:
+                        t = ki + [v]
+                        list1.append([t,value-k-1])
+
+                if index >= value:                #站点左边
+                    #list1.extend([ [ ki.append(v),k]  for k,v in enumerate(all_lines[x][index-value:index]) if v in transfer_site or k == 0 ]) 
+                    for k,v in enumerate(all_lines[x][index-value:index]):
+                        if v in transfer_site or k == 0 :
+                            t = ki + [v]
+                            list1.append([t,k])
+                else:
+                    #list1.extend([ [ ki.append(v),k]  for k,v in enumerate(all_lines[x][:index]) if v in transfer_site or k == 0 ]) 
+                    for k,v in enumerate(all_lines[x][value-index:index]):
+                        if v in transfer_site :
+                            t = ki + [v]
+                            list1.append([t,k+1])
+                            
+            list3.extend([x for x in list1 if x[1] == 0])   #将位置剩余0的加入
+            list1 = deque([x for x in list1 if x[1] != 0])  #将位置剩余0的移出
+    return list3
+
+x1 = find('车公庙',9)
+print(x1)
+
 
